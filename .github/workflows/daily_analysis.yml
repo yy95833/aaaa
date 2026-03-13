@@ -48,15 +48,34 @@ jobs:
         run: |
           mkdir -p data logs reports
 
-
+      - name: 检查 DeepSeek 配置
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_BASE_URL: ${{ secrets.OPENAI_BASE_URL }}
+          OPENAI_MODEL: ${{ secrets.OPENAI_MODEL }}
+        run: |
+          if [ -z "$OPENAI_API_KEY" ]; then
+            echo "OPENAI_API_KEY 未配置"
+            exit 1
+          fi
+          if [ -z "$OPENAI_BASE_URL" ]; then
+            echo "OPENAI_BASE_URL 未配置"
+            exit 1
+          fi
+          if [ -z "$OPENAI_MODEL" ]; then
+            echo "OPENAI_MODEL 未配置"
+            exit 1
+          fi
+          echo "OPENAI_API_KEY: 已配置"
+          echo "OPENAI_BASE_URL: $OPENAI_BASE_URL"
+          echo "OPENAI_MODEL: $OPENAI_MODEL"
 
       - name: 执行股票分析
         env:
-          # 只使用 Gemini，彻底避免 OpenAI / Kimi 干扰
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GEMINI_MODEL: gemini-2.5-flash
-          GEMINI_MODEL_FALLBACK: gemini-2.5-flash-lite
-          GEMINI_REQUEST_DELAY: '3.0'
+          # 只使用 DeepSeek / OpenAI 兼容接口
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_BASE_URL: ${{ secrets.OPENAI_BASE_URL }}
+          OPENAI_MODEL: ${{ secrets.OPENAI_MODEL }}
 
           # 邮件通知
           EMAIL_SENDER: ${{ secrets.EMAIL_SENDER }}
@@ -90,17 +109,17 @@ jobs:
           FORCE_RUN_ARG=""
 
           echo "=========================================="
-          echo "🚀 A股自选股智能分析系统"
+          echo " A股自选股智能分析系统"
           echo "=========================================="
-          echo "⏰ 时间: $(TZ='Asia/Shanghai' date '+%Y-%m-%d %H:%M:%S')"
-          echo "🎯 运行模式: $MODE"
-          echo "📊 自选股: $STOCK_LIST"
-          echo "📝 报告类型: $REPORT_TYPE"
+          echo " 时间: $(TZ='Asia/Shanghai' date '+%Y-%m-%d %H:%M:%S')"
+          echo " 运行模式: $MODE"
+          echo " 自选股: $STOCK_LIST"
+          echo " 报告类型: $REPORT_TYPE"
           echo "=========================================="
 
           if [ "${{ github.event.inputs.force_run }}" = "true" ]; then
             FORCE_RUN_ARG="--force-run"
-            echo "⚡ 已启用强制运行模式（跳过交易日检查）"
+            echo " 已启用强制运行模式（跳过交易日检查）"
           fi
 
           if [ "$MODE" = "market-only" ]; then
@@ -126,16 +145,16 @@ jobs:
         run: |
           echo ""
           echo "=========================================="
-          echo "📊 分析完成"
+          echo " 分析完成"
           echo "=========================================="
           if [ -d "reports" ] && [ "$(ls -A reports 2>/dev/null)" ]; then
             echo "生成的报告:"
             ls -la reports/
           else
-            echo "⚠️ 未生成报告文件"
+            echo " 未生成报告文件"
           fi
           echo ""
           if ls logs/stock_analysis_*.log >/dev/null 2>&1; then
-            echo "📜 最近日志（最后 30 行）:"
+            echo " 最近日志（最后 30 行）:"
             tail -30 logs/stock_analysis_*.log 2>/dev/null || echo "无日志"
           fi
