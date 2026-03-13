@@ -48,16 +48,7 @@ jobs:
         run: |
           mkdir -p data logs reports
 
-      - name: 显示 Gemini 配置状态
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: |
-          if [ -n "$GEMINI_API_KEY" ]; then
-            echo "GEMINI_API_KEY: 已配置"
-          else
-            echo "GEMINI_API_KEY: 未配置"
-            exit 1
-          fi
+
 
       - name: 执行股票分析
         env:
