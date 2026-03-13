@@ -69,9 +69,9 @@ jobs:
 
           # 邮件通知
           EMAIL_SENDER: ${{ secrets.EMAIL_SENDER }}
-          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
-          EMAIL_RECEIVERS: ${{ secrets.EMAIL_RECEIVERS }}
-          EMAIL_SENDER_NAME: ${{ secrets.EMAIL_SENDER_NAME }}
+EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+EMAIL_RECEIVERS: ${{ secrets.EMAIL_RECEIVERS }}
+EMAIL_SENDER_NAME: ${{ secrets.EMAIL_SENDER_NAME }}
 
           # 企业微信
           WECHAT_WEBHOOK_URL: ${{ secrets.WECHAT_WEBHOOK_URL }}
